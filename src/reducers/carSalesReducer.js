@@ -40,10 +40,16 @@ export const carSalesReducer = (state = initialState, action) => {
                 additionalPrice: (state.additionalPrice += action.payload.price),
                 car: {
                     ...state.car,
-                    price: state.car.price + state.additionalPrice,
+                    // price: 26395 + state.additionalPrice,
+                    // features: [
+                    //     ...state.car.features,
+                    //     action.payload
+                    // ]
                     features: [
                         ...state.car.features,
-                        action.payload
+                        state.car.features.includes(action.payload)
+                            ? state.car.features 
+                            : action.payload
                     ]
                 },
               };
@@ -53,7 +59,7 @@ export const carSalesReducer = (state = initialState, action) => {
                 ...state,
                 car: {
                     ...state.car,
-                    price: state.car.price - action.payload.price,
+                    // price: state.car.price - action.payload.price,
                     features: state.car.features.filter(
                         (feature) => feature.id !== action.payload.id
                     ),
