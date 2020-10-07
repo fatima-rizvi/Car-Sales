@@ -1,4 +1,7 @@
-// STEP 1: creat initial state and empty reducer
+import { ADD_FEATURE } from '../actions/carSalesActions'
+import { DELETE_FEATURE } from '../actions/carSalesActions'
+
+// STEP 1: create initial state and empty reducer
 
 const initialState = {
     additionalPrice: 0,
@@ -17,7 +20,7 @@ const initialState = {
       ]
 };
 
-// set stae = initialState in the rediucer when it's being passed in as  a default value
+// set state = initialState in the rediucer when it's being passed in as  a default value
 
 export const carSalesReducer = (state = initialState, action) => {
     console.log("Redux is calling the reducer with state:", state, "and action:", action);
@@ -27,22 +30,37 @@ export const carSalesReducer = (state = initialState, action) => {
         // remove feature
         //make sure the total additional price is ALWAY recalculated in those
         //STEP 3 - created dummy cases
-        case "ADD_FEATURE":
+        case ADD_FEATURE:
             console.log("hitting add feature case");
+            console.log("add payload", action.payload);
+            console.log("additional price", state.additionalPrice);
+            console.log("feature price", action.payload.price);
+            return {
+                ...state,
+                additionalPrice: (state.additionalPrice += action.payload.price),
+                car: {
+                    ...state.car,
+                    price: state.car.price + state.additionalPrice,
+                    features: [
+                        ...state.car.features,
+                        action.payload
+                    ]
+                },
+              };
+        case DELETE_FEATURE:
+            console.log("hitting remove feature case: ", action.payload);
             return {
                 ...state,
                 car: {
                     ...state.car,
-                    features: state.car.features.includes(action.payload)
-                        ? [state.car.features]
-                        : [state.car.features, action.payload]
+                    price: state.car.price - action.payload.price,
+                    features: state.car.features.filter(
+                        (feature) => feature.id !== action.payload.id
+                    ),
                 },
-                additionalPrice: (state.additionalPrice += action.payload.price)
-            }
-        case "REMOVE_FEATURE":
-            console.log("hitting remove feature case");
-            return state
+                additionalPrice: (state.additionalPrice -= action.payload.price),
+              };
         default:
             return state;
-    }
+    };
 }
